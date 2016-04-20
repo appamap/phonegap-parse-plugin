@@ -1,6 +1,7 @@
 #import "CDVParsePlugin.h"
 #import <Cordova/CDV.h>
 #import <Parse/Parse.h>
+//#import <ParseUI/ParseUI.h>
 #import <objc/runtime.h>
 #import <objc/message.h>
 
@@ -11,7 +12,20 @@
     CDVPluginResult* pluginResult = nil;
     NSString *appId = [command.arguments objectAtIndex:0];
     NSString *clientKey = [command.arguments objectAtIndex:1];
-    [Parse setApplicationId:appId clientKey:clientKey];
+    
+    
+    
+    //[Parse setApplicationId:appId clientKey:clientKey];
+    
+    
+    [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
+        configuration.applicationId = appId ;
+        configuration.clientKey = clientKey;
+        configuration.server = @"http://ec2-54-213-135-81.us-west-2.compute.amazonaws.com:1337/parse/";
+    }]];
+    
+    
+    
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
@@ -51,19 +65,19 @@
     if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)]) {
         UIUserNotificationSettings *settings =
         [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
-                                                     UIUserNotificationTypeBadge |
-                                                     UIUserNotificationTypeSound
+         UIUserNotificationTypeBadge |
+         UIUserNotificationTypeSound
                                           categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
         [[UIApplication sharedApplication] registerForRemoteNotifications];
     }
     else {
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-            UIRemoteNotificationTypeBadge |
-            UIRemoteNotificationTypeAlert |
-            UIRemoteNotificationTypeSound];
+         UIRemoteNotificationTypeBadge |
+         UIRemoteNotificationTypeAlert |
+         UIRemoteNotificationTypeSound];
     }
-
+    
     CDVPluginResult* pluginResult = nil;
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     NSString *channel = [command.arguments objectAtIndex:0];
