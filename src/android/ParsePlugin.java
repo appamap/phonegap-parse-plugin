@@ -9,6 +9,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
+
 import java.util.List;
 
 public class ParsePlugin extends CordovaPlugin {
@@ -63,43 +64,67 @@ public class ParsePlugin extends CordovaPlugin {
         return false;
     }
     
-    private void initialize(final CallbackContext callbackContext, final JSONArray args) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                
-                try
-                {
-                    Parse.initialize(new Parse.Configuration.Builder(cordova.getActivity())
-                                     .applicationId("EWVn1O9MYRPjbTmwXKnGH3Vht52wQ5Mw7JeNsGt9")
-                                     .clientKey("LVReR0mRHrAVkIGXwSRm22XkaubHLjgb4QxZnHxp")
-                                     .server("http://parseserver-dm5pm-env.us-east-1.elasticbeanstalk.com/parse/")
-                                     .build()
-                                     );
+    private void initialize(final CallbackContext callbackContext, final JSONArray args) throws JSONException {
+        
+        if (args.length() >= 2) {
+            
+            final String appId = args.getString(0);
+            final String clientKey = args.getString(1);
+            
+            
+            cordova.getThreadPool().execute(new Runnable() {
+                public void run() {
                     
-                    ParseInstallation.getCurrentInstallation().saveInBackground();
-                    
-                    /* for debubbling NOTE add / to end of parse url
-                     
-                     ParsePush.subscribeInBackground("", new SaveCallback() {
-                     @Override
-                     public void done(ParseException e) {
-                     if (e == null) {
-                     Log.d("com.parse.push",
-                     "successfully subscribed to the broadcast channel.");
-                     } else {
-                     Log.e("com.parse.push", "failed to subscribe for push", e);
-                     }
-                     }
-                     });
-                     */
-                    
-                    callbackContext.success();
+                    try {
+                        
+                        //Parse.addParseNetworkInterceptor(new ParseLogInterceptor());
+                        Parse.initialize(new Parse.Configuration.Builder(cordova.getActivity())
+                                         .applicationId(appId)
+                                         .clientKey(clientKey)
+                                         .server("http://parseserver-dm5pm-env.us-east-1.elasticbeanstalk.com/parse/")
+                                         .build()
+                                         );
+                        
+                        //ParseInstallation.getCurrentInstallation().saveInBackground();
+                        
+                        
+                        final ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+                        parseInstallation.put("GCMSenderId","89844585235");
+                        parseInstallation.saveInBackground();
+                        
+                        /*
+                         ParsePush.subscribeInBackground("", new SaveCallback() {
+                         @Override
+                         public void done(ParseException e) {
+                         if (e == null) {
+                         Log.d("com.parse.push",
+                         "successfully subscribed to the broadcast channel.");
+                         } else {
+                         Log.e("com.parse.push", "failed to subscribe for push", e);
+                         }
+                         }
+                         });
+                         
+                         */
+                        
+                        
+                        callbackContext.success();
+                    }
+                    catch (Exception e) {
+                        System.err.println("Caught IOException: " + e.getMessage());
+                        
+                        final ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+                        parseInstallation.put("GCMSenderId","89844585235");
+                        parseInstallation.saveInBackground();
+                        
+                        callbackContext.success();
+                    }
                 }
-                catch (Exception e) {
-                    System.err.println("Caught IOException: " + e.getMessage());
-                }
-            }
-        });
+            });
+            
+        }
+        
+        
     }
     
     private void getInstallationId(final CallbackContext callbackContext) {
@@ -126,15 +151,15 @@ public class ParsePlugin extends CordovaPlugin {
                 
                 List<String> list = ParseInstallation.getCurrentInstallation().getList("channels");
                 
-                //ParseInstallation.getCurrentInstallation().getObjectId().get
-                
                 try
                 {
-                    callbackContext.success(list.toString());
+                    callbackContext.success(list.toString()); //try to pull list from aws
                     
                 }
                 catch (Exception e) {
                     System.err.println("Caught IOException: " + e.getMessage());
+                    
+                    callbackContext.success("");
                 }
             }
         });
@@ -143,7 +168,6 @@ public class ParsePlugin extends CordovaPlugin {
     private void subscribe(final String channel, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
-                
                 
                 try
                 {
@@ -171,8 +195,6 @@ public class ParsePlugin extends CordovaPlugin {
                 catch (Exception e) {
                     System.err.println("Caught IOException: " + e.getMessage());
                 }
-                
-                
             }
         });
     }
