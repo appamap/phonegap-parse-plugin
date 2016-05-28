@@ -1,3 +1,23 @@
+Plugin Adjustments
+==================
+
+We changed this plugin for our own AWS Parse Server, so we could handshake with service with custom URL. 
+
+    Parse.initialize(new Parse.Configuration.Builder(cordova.getActivity())
+                                        .applicationId(appId)
+                                        .clientKey(clientKey)
+                                        .server("http://parseserver-dm5pm-env.us-east-1.elasticbeanstalk.com/parse/")
+                                        .build()
+                        );
+
+                        //ParseInstallation.getCurrentInstallation().saveInBackground();
+
+
+                        final ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+                        parseInstallation.put("GCMSenderId","89844585235");
+                        parseInstallation.saveInBackground();
+
+
 Phonegap Parse.com Plugin
 =========================
 
