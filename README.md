@@ -6,7 +6,7 @@ We changed this plugin for our own AWS Parse Server, so we could handshake with 
     Parse.initialize(new Parse.Configuration.Builder(cordova.getActivity())
                                         .applicationId(appId)
                                         .clientKey(clientKey)
-                                        .server("http://parseserver-dm5pm-env.us-east-1.elasticbeanstalk.com/parse/")
+                                        .server("http://elasticbeanstalklink")
                                         .build()
                         );
 
@@ -16,6 +16,52 @@ We changed this plugin for our own AWS Parse Server, so we could handshake with 
                         final ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
                         parseInstallation.put("GCMSenderId","89844585235");
                         parseInstallation.saveInBackground();
+
+
+
+We replaced PushService objects with ParsePush objects e.g.:
+
+ private void getSubscriptions(final CallbackContext callbackContext) {
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                 Set<String> subscriptions = PushService.getSubscriptions(cordova.getActivity());
+                 callbackContext.success(subscriptions.toString());
+            }
+        });
+    }
+    
+    
+
+private void getSubscriptions(final CallbackContext callbackContext) {
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+
+                List<String> list = ParseInstallation.getCurrentInstallation().getList("channels");
+
+                try
+                {
+                    callbackContext.success(list.toString()); //try to pull list from aws
+                    
+                }
+                catch (Exception e) {
+                    System.err.println("Caught IOException: " + e.getMessage());
+
+                    callbackContext.success("");
+                }
+            }
+        });
+    }
+    
+    
+    Compiles/ Maven
+    ===============
+    
+      compile 'com.parse:parse-android:1.10.2'
+    debugCompile 'com.parse:parseinterceptors:0.0.1'
+    
+    
+    
+    
 
 
 Phonegap Parse.com Plugin
