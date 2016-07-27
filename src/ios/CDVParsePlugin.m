@@ -21,7 +21,7 @@
     [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
         configuration.applicationId = appId ;
         configuration.clientKey = clientKey;
-        configuration.server = @"http://ec2-54-213-135-81.us-west-2.compute.amazonaws.com:1337/parse/";
+        configuration.server = @"http://parseserver-dm5pm-env.us-east-1.elasticbeanstalk.com/parse/";
     }]];
     
     
