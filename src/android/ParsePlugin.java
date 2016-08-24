@@ -85,7 +85,7 @@ public class ParsePlugin extends CordovaPlugin {
                         Parse.initialize(new Parse.Configuration.Builder(cordova.getActivity())
                                         .applicationId(appId)
                                         .clientKey(clientKey)
-                                        .server("http://parseserver-dm5pm-env.us-east-1.elasticbeanstalk.com/parse/")
+                                        .server("https://parse.geteventro.com/parse/")
                                         .build()
                         );
 

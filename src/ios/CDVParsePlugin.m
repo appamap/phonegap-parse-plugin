@@ -21,7 +21,7 @@
     [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
         configuration.applicationId = appId ;
         configuration.clientKey = clientKey;
-        configuration.server = @"http://parseserver-dm5pm-env.us-east-1.elasticbeanstalk.com/parse/";
+        configuration.server = @"https://parse.geteventro.com/parse/";
     }]];
     
     
