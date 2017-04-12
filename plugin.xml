@@ -12,8 +12,7 @@
 
     <!-- android -->
     <platform name="android">
-        <preference name="APP_ID" />
-        <preference name="CLIENT_KEY" />
+       
         
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="ParsePlugin">
@@ -57,8 +56,7 @@
 
         <source-file src="src/android/parseplugin.xml" target-dir="res/values" />
         <config-file target="res/values/parseplugin.xml" parent="/*">
-            <string name="parse_app_id">$APP_ID</string>
-            <string name="parse_client_key">$CLIENT_KEY</string>
+           
         </config-file>
      </platform>
 
