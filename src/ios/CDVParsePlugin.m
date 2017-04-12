@@ -12,7 +12,8 @@
     CDVPluginResult* pluginResult = nil;
     NSString *appId = [command.arguments objectAtIndex:0];
     NSString *clientKey = [command.arguments objectAtIndex:1];
-    
+    NSString *server_url = [command.arguments objectAtIndex:2];
+    //@"https://parse.geteventro.com/parse/"
     
     
     //[Parse setApplicationId:appId clientKey:clientKey];
@@ -21,7 +22,7 @@
     [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
         configuration.applicationId = appId ;
         configuration.clientKey = clientKey;
-        configuration.server = @"https://parse.geteventro.com/parse/";
+        configuration.server = server_url;
     }]];
     
     
