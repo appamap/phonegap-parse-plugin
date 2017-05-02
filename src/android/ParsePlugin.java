@@ -73,6 +73,7 @@ public class ParsePlugin extends CordovaPlugin {
 
             final String appId = args.getString(0);
             final String clientKey = args.getString(1);
+            final String url = args.getString(2);
 
             final Context context=this.cordova.getActivity().getApplicationContext();
 
@@ -85,7 +86,7 @@ public class ParsePlugin extends CordovaPlugin {
                         Parse.initialize(new Parse.Configuration.Builder(cordova.getActivity())
                                         .applicationId(appId)
                                         .clientKey(clientKey)
-                                        .server("https://parse.geteventro.com/parse/")
+                                        .server(url)
                                         .build()
                         );
 
@@ -105,7 +106,7 @@ public class ParsePlugin extends CordovaPlugin {
 
                         //ParseInstallation.getCurrentInstallation().getString("deviceToken");
                         final ParseInstallation parseInstallation =  ParseInstallation.getCurrentInstallation();
-                       // parseInstallation.put("GCMSenderId", "114881002975");
+                        //parseInstallation.put("GCMSenderId", "817884550241");
                         parseInstallation.saveInBackground();
 
 /*
