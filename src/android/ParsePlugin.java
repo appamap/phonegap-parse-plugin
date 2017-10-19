@@ -24,12 +24,20 @@ public class ParsePlugin extends CordovaPlugin {
     public static final String ACTION_SUBSCRIBE = "subscribe";
     public static final String ACTION_UNSUBSCRIBE = "unsubscribe";
     
+    public static Application myapp;
+    
     public static void initializeParseWithApplication(Application app) {
-        String appId = getStringByKey(app, "parse_app_id");
-        String clientKey = getStringByKey(app, "parse_client_key");
-        Parse.enableLocalDatastore(app);
-        Log.d(TAG, "Initializing with parse_app_id: " + appId + " and parse_client_key:" + clientKey);
-        Parse.initialize(app, appId, clientKey);
+        
+        //        String appId = getStringByKey(app, "parse_app_id");
+        //        String clientKey = getStringByKey(app, "parse_client_key");
+        
+        //        String appId = "iuV3CpBCTLCmFIcaLOWdGjjtU8kgftGW1R720Ukl";
+        //        String clientKey = "avwkjSD8TGytJOMOK2sPyYMhEKmlIJlUclNLgj69";
+        //
+        //        Parse.enableLocalDatastore(app);
+        //        Log.d(TAG, "Initializing with parse_app_id: " + appId + " and parse_client_key:" + clientKey);
+        //        Parse.initialize(app, appId, clientKey);
+        myapp=app;
     }
     
     private static String getStringByKey(Application app, String key) {
@@ -66,78 +74,100 @@ public class ParsePlugin extends CordovaPlugin {
         }
         return false;
     }
-
+    
     private void initialize(final CallbackContext callbackContext, final JSONArray args) throws JSONException {
-
+        
         if (args.length() >= 2) {
-
-            final String appId = args.getString(0);
-            final String clientKey = args.getString(1);
-            final String url = args.getString(2);
-
-            final Context context=this.cordova.getActivity().getApplicationContext();
-
-            cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-
-                    try {
-
-                        //Parse.addParseNetworkInterceptor(new ParseLogInterceptor());
-                        Parse.initialize(new Parse.Configuration.Builder(cordova.getActivity())
-                                        .applicationId(appId)
-                                        .clientKey(clientKey)
-                                        .server(url)
-                                        .build()
-                        );
-
-
-                      //  GoogleCloudMessaging.getInstance(this.cordova.getActivity()).register(YOUR_GCMSENDERID, PARSE_DEFAULT_GCM_SENDERID);
-                      // ParseInstallation.getCurrentInstallation().saveInBackground();
-
-
-/*
-                        InstanceID instanceID = InstanceID.getInstance(context);
-                        String token = instanceID.getToken("114881002975",
-                                GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-
-*/
-
-
-
-                        //ParseInstallation.getCurrentInstallation().getString("deviceToken");
-                        final ParseInstallation parseInstallation =  ParseInstallation.getCurrentInstallation();
-                        //parseInstallation.put("GCMSenderId", "817884550241");
-                        parseInstallation.saveInBackground();
-
-/*
-                     ParsePush.subscribeInBackground("", new SaveCallback() {
-                     @Override
-                     public void done(ParseException e) {
-                     if (e == null) {
-                     Log.d("com.parse.push",
-                     "successfully subscribed to the broadcast channel.");
-                     } else {
-                     Log.e("com.parse.push", "failed to subscribe for push", e);
-                     }
-                     }
-                     });
-
-                     */
-
-
-
-
-                        callbackContext.success();
+            try{
+                final String appId = args.getString(0);
+                final String clientKey = args.getString(1);
+                final String url = args.getString(2);
+                
+                Context mycontext=null;
+                //                if (this.cordova.getActivity()==null){
+                //                    Log.w("init","ERRORRRRRRR");
+                //                    return;
+                ////                    final Context context=this.cordova.getActivity().getApplicationContext();
+                //                }else{
+                //                    mycontext=myapp;
+                //                }
+                mycontext=myapp;
+                final Context context=mycontext;
+                
+                
+                cordova.getThreadPool().execute(new Runnable() {
+                    public void run() {
+                        
+                        try {
+                            
+                            //Parse.addParseNetworkInterceptor(new ParseLogInterceptor());
+                            if (cordova.getActivity()==null){
+                                Log.w("init","ERRORRRRRRR");
+                            }else{
+                                Log.w("init","INIT");
+                                Parse.initialize(new Parse.Configuration.Builder(myapp.getApplicationContext())
+                                                 .applicationId(appId)
+                                                 .clientKey(clientKey)
+                                                 .server(url)
+                                                 .build()
+                                                 );
+                                
+                                final ParseInstallation parseInstallation =  ParseInstallation.getCurrentInstallation();
+                                //parseInstallation.put("GCMSenderId", "817884550241");
+                                parseInstallation.saveInBackground();
+                                
+                                callbackContext.success();
+                                
+                            }
+                            
+                            
+                            //  GoogleCloudMessaging.getInstance(this.cordova.getActivity()).register(YOUR_GCMSENDERID, PARSE_DEFAULT_GCM_SENDERID);
+                            // ParseInstallation.getCurrentInstallation().saveInBackground();
+                            
+                            
+                            /*
+                             InstanceID instanceID = InstanceID.getInstance(context);
+                             String token = instanceID.getToken("114881002975",
+                             GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                             
+                             */
+                            
+                            
+                            
+                            //ParseInstallation.getCurrentInstallation().getString("deviceToken");
+                            
+                            /*
+                             ParsePush.subscribeInBackground("", new SaveCallback() {
+                             @Override
+                             public void done(ParseException e) {
+                             if (e == null) {
+                             Log.d("com.parse.push",
+                             "successfully subscribed to the broadcast channel.");
+                             } else {
+                             Log.e("com.parse.push", "failed to subscribe for push", e);
+                             }
+                             }
+                             });
+                             
+                             */
+                            
+                            
+                            
+                            
+                        }
+                        catch (Exception e) {
+                            System.err.println("Caught IOException: " + e.getMessage());
+                            
+                            //callbackContext.success(); //already installed on AWS
+                        }
                     }
-                    catch (Exception e) {
-                        System.err.println("Caught IOException: " + e.getMessage());
-
-                        //callbackContext.success(); //already installed on AWS
-                    }
-                }
-            });
-
-                }
+                });
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+            
+            
+        }
     }
     
     private void getInstallationId(final CallbackContext callbackContext) {
@@ -161,18 +191,18 @@ public class ParsePlugin extends CordovaPlugin {
     private void getSubscriptions(final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
-
-
+                
+                
                 List<String> list = ParseInstallation.getCurrentInstallation().getList("channels");
-
+                
                 try
                 {
                     callbackContext.success(list.toString()); //try to pull list from aws
-
+                    
                 }
                 catch (Exception e) {
                     System.err.println("Caught IOException: " + e.getMessage());
-
+                    
                     callbackContext.success("");
                 }
             }
@@ -182,7 +212,7 @@ public class ParsePlugin extends CordovaPlugin {
     private void subscribe(final String channel, final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
-
+                
                 try
                 {
                     ParsePush.subscribeInBackground(channel);
